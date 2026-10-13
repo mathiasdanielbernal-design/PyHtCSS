@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PyHtCSS · Aprende a programar</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;800&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+:root{--bg:#F1EEFB;--card:#fff;--ink:#231F45;--mut:#6A6590;--ac:#7C4DDB;--acd:#5B33B3;--soft:#E3DBF8;--line:#CFC6EE;--ok:#1F7A4F;--bad:#B8334C;--lock:#D9D4EE;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#232846;--card:#3A3F6B;--ink:#F2F0FF;--mut:#A9AAD6;--ac:#8B5CDD;--acd:#6A3FC4;--soft:#4A4F82;--line:#4A4F82;--ok:#7AD99B;--bad:#FF8CA3;--lock:#1D2038}}
+:root[data-theme="dark"]{--bg:#232846;--card:#3A3F6B;--ink:#F2F0FF;--mut:#A9AAD6;--ac:#8B5CDD;--acd:#6A3FC4;--soft:#4A4F82;--line:#4A4F82;--ok:#7AD99B;--bad:#FF8CA3;--lock:#1D2038}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 16px/1.5 Manrope,system-ui,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+#app{max-width:480px;margin:0 auto;padding:0 16px 100px}
+.v{display:none}.v.on{display:block}
+h2{margin:20px 0 10px;font-size:22px;font-weight:800;letter-spacing:-.01em}
+.top{display:flex;gap:10px;padding:16px 0 8px}
+.chip{flex:1;background:var(--card);border-radius:14px;padding:10px;text-align:center;font-weight:700}
+.card{background:var(--card);border-radius:18px;padding:16px;margin:8px 0;border-bottom:5px solid var(--line)}
+.card small,.mut{color:var(--mut)}
+.bar{flex:1;height:10px;background:var(--soft);border-radius:9px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ac);transition:width .3s}
+.pills{display:flex;gap:8px;margin:12px 0}
+.pills button{flex:1;padding:10px;border:2px solid var(--line);border-radius:12px;background:var(--card);font-weight:700}
+.pills .on{background:var(--ac);border-color:var(--ac);color:#fff}
+.path{display:flex;flex-direction:column;align-items:center;gap:24px;padding:20px 0;position:relative}
+.path::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:8px;margin-left:-4px;background:var(--soft)}
+.n{position:relative;text-align:center}
+.n small{display:block;margin-top:12px;color:var(--mut);font-weight:700}
+.node{width:84px;height:84px;border:0;border-radius:24px;font-size:32px;background:var(--ac);color:#fff;box-shadow:0 8px 0 var(--acd)}
+.node.lock{background:var(--lock);box-shadow:0 8px 0 var(--soft);color:var(--mut);cursor:not-allowed}
+.node.cur{outline:5px solid var(--soft)}
+.go{width:100%;padding:15px;border:0;border-radius:14px;background:var(--ac);color:#fff;font-weight:700;font-size:17px;box-shadow:0 5px 0 var(--acd)}
+.go:disabled{opacity:.45;box-shadow:none;cursor:default}
+.tabs{position:fixed;z-index:5;left:0;right:0;bottom:0;display:flex;justify-content:center;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs button{flex:1;max-width:160px;border:0;background:none;padding:10px 0;color:var(--mut);font-size:13px}
+.tabs button span{display:block;font-size:22px}
+.tabs .on{color:var(--ink);font-weight:700;box-shadow:inset 0 3px 0 var(--ac)}
+textarea{display:block;width:100%;height:150px;border:2px solid var(--line);border-radius:12px;padding:12px;background:var(--bg);color:var(--ink);font:14px/1.5 "JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}
+iframe{display:block;width:100%;height:130px;border:2px solid var(--line);border-radius:12px;margin-top:10px;background:#fff}
+.stat{display:flex;justify-content:space-between;margin:12px 0 6px}
+.prow{display:flex;align-items:center;gap:12px;margin:10px 0}.prow b{width:70px}
+.link{background:none;border:2px solid var(--line);border-radius:12px;padding:10px 14px;margin-top:14px}
+#play{position:fixed;z-index:50;inset:0;background:var(--bg);display:none;overflow:auto;padding-top:env(safe-area-inset-top,0px)}
+.pw{max-width:480px;margin:0 auto;min-height:100%;display:flex;flex-direction:column}
+.ph{display:flex;align-items:center;gap:14px;padding:16px}
+.x{border:0;background:none;font-size:24px;color:var(--mut)}
+.pq{padding:8px 20px;font-size:20px;line-height:1.45}
+.pb{padding:8px 20px}
+code{background:var(--soft);padding:2px 6px;border-radius:6px;font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;font-size:.9em}
+.opts button{display:block;width:100%;text-align:left;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 16px;margin:10px 0}
+.opts button.sel{border-color:var(--ac);background:var(--soft)}
+.slot{min-height:76px;background:var(--card);border:2px dashed var(--line);border-radius:14px;padding:12px;margin:8px 0 16px;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start}
+.pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.tk{border:0;background:var(--soft);border-radius:10px;padding:10px 14px;font:600 15px "JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;box-shadow:0 4px 0 var(--line)}
+#ti{width:100%;padding:14px;border:2px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);font:16px "JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}
+.foot{margin-top:auto;padding:16px 20px calc(18px + env(safe-area-inset-bottom,0px));background:var(--card);border-radius:20px 20px 0 0}
+.foot.ok b{color:var(--ok)}.foot.bad b{color:var(--bad)}
+.foot b{font-size:20px}.foot p{margin:6px 0 12px}.foot.ok .go,.foot.bad .go{margin-top:12px}
+.fin{text-align:center}.fin .big{font-size:80px;margin-top:20vh}
+body{--ac:#D9480F;--acd:#A93509;background:linear-gradient(180deg,color-mix(in srgb,var(--ac) 18%,var(--bg)),var(--bg) 340px) no-repeat,var(--bg)}
+body[data-c="1"]{--ac:#2F6BF0;--acd:#1D49B0}
+body[data-c="2"]{--ac:#0E8A63;--acd:#0A6548}
+body{--soft:color-mix(in srgb,var(--ac) 24%,var(--bg))}
+.top .chip:nth-child(1){background:#FFD43B;color:#3A2F00}
+.top .chip:nth-child(2){background:#FF8A5B;color:#3A1200}
+.top .chip:nth-child(3){background:#5BD6A0;color:#06311F}
+#ban{background:var(--ac);color:#fff;border-bottom-color:var(--acd)}
+#ban small{color:#ffffffd0}
+#ban .bar{background:#ffffff40}
+#ban .bar i{background:#fff}
+.node.cur{background:#FFC83D;color:#3A2A00;box-shadow:0 8px 0 #D9A21B}
+.pills button:nth-child(1){border-color:#D9480F}
+.pills button:nth-child(2){border-color:#2F6BF0}
+.pills button:nth-child(3){border-color:#0E8A63}
+.hs [data-k^="html"]{border-bottom-color:#D9480F}
+.hs [data-k^="css"]{border-bottom-color:#2F6BF0}
+.hs [data-k^="py"]{border-bottom-color:#0E8A63}
+.go.alt{background:var(--card);color:var(--ink);border:2px solid var(--line);box-shadow:0 5px 0 var(--line)}
+.err{color:var(--bad);min-height:1.4em;margin:4px 0}
+.wel .go{margin-top:12px}
+.wel .link{width:100%;margin:12px 0 0}
+.fin .fm{margin:auto 0;padding:24px}
+.fin h2{margin:18px 0 6px;font-size:26px}
+.tip{font-size:13px;color:var(--mut);max-width:36ch;margin:16px auto 0;line-height:1.55}
+.fb{padding:0 20px calc(18px + env(safe-area-inset-bottom,0px))}
+.sts{display:flex;border:2px solid var(--line);border-radius:16px;margin:0 0 16px;overflow:hidden}
+.sts div{flex:1;text-align:center;padding:12px 4px;font-size:13px;color:var(--mut)}
+.sts div+div{border-left:2px solid var(--line)}
+.sts b{display:block;font-size:24px;font-weight:800}
+.gl{display:flex;justify-content:space-between;font-size:13px;color:var(--mut);margin:6px 2px 16px}
+.opt{display:block;width:100%;text-align:left;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 16px;margin:10px 0}
+.opt b{font-size:18px}.opt small{display:block;color:var(--mut);font-weight:500}
+.stg{position:relative;z-index:1;background:var(--ac);color:#fff;padding:6px 16px;border-radius:99px;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+.rf{background:var(--card);border-radius:14px;margin:10px 0;padding:0 16px}
+.rf summary{padding:14px 0;cursor:pointer;font-weight:700;list-style:none}
+.rf summary::-webkit-details-marker{display:none}
+.rf summary::after{content:"+";float:right;color:var(--mut)}
+.rf[open] summary::after{content:"–"}
+.rf p{margin:0 0 10px}
+.rf pre{margin:0 0 14px;padding:12px;border-radius:10px;background:var(--bg);overflow:auto;font-size:13px}
+#gq{width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font:inherit;margin:4px 0 8px}
+.hint{font-size:14px;color:var(--mut);margin:10px 0 0}
+.mas{font-size:44px;line-height:1}
+.fin .big{color:var(--ok)}
+.msg{display:flex;align-items:center;gap:12px}
+.hs{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
+.hs .card{min-width:150px;margin:0;flex:none;cursor:pointer}
+.node.pj{width:250px;height:auto;padding:14px 18px;font-size:20px;text-align:left}
+.fr{height:200px;margin:12px 0 0}
+.wel{text-align:center;padding:40px 20px}
+.wel input,.wel select{width:100%;padding:14px;margin:8px 0;border:2px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);font:inherit}
+.cert{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+<div id="app">
+<div class="top"><div class="chip" id="cx" title="XP">⚡ 0</div><div class="chip" id="cs" title="Racha">🔥 0</div><div class="chip" id="cl" title="Lecciones">📚 0</div></div>
+
+<section class="v on" id="v0">
+<div class="pills" id="pills"></div>
+<div class="card" id="ban"></div>
+<div class="path" id="path"></div>
+</section>
+
+<section class="v" id="v1">
+<h2>Revisión diaria</h2>
+<div class="card"><p style="margin-top:0">5 ejercicios al azar de lo que ya aprendiste. Si todavía no completaste nada, empiezas con lo básico.</p><button class="go" id="daily">Empezar ahora</button></div>
+<h2>Practica temas pasados</h2><div class="hs" id="past"></div>
+<h2>Tu desempeño practicando</h2><div class="card" id="perf"></div>
+<h2>Playgrounds</h2>
+<div class="card"><p class="mut" style="margin-top:0">Escribe HTML y CSS libremente y mira el resultado.</p>
+<label for="code" class="mut">Tu código</label><textarea id="code" spellcheck="false"></textarea>
+<iframe id="out" title="Resultado del código" sandbox></iframe></div>
+</section>
+
+<section class="v" id="v2">
+<h2>Tu perfil</h2>
+<div class="card"><div id="av" style="width:72px;height:72px;border-radius:50%;background:var(--ac);color:#fff;font-size:32px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto">E</div><h2 id="pnm" style="text-align:center;margin:4px 0"></h2><p class="mut" id="pgl" style="text-align:center;margin:0 0 8px"></p><div id="pst"></div><button class="go" id="sh" style="margin-top:12px">Compartir mi progreso</button></div>
+<h2>Certificados</h2>
+<div class="card" id="prg"></div>
+<button class="link" id="reset">Reiniciar mi progreso</button> <button class="link" id="lo">Cerrar sesión</button>
+</section>
+
+<section class="v" id="v3">
+<h2>Guía de referencia</h2>
+<p class="mut" style="margin-top:0">Qué es y para qué sirve cada cosa. Toca una para ver su explicación y un ejemplo.</p>
+<label class="mut" for="gq">Buscar</label>
+<input id="gq" type="search" placeholder="Por ejemplo: html, href, if..." autocomplete="off">
+<div class="pills" id="gp"></div>
+<div id="gl"></div>
+</section>
+</div>
+
+<nav class="tabs" aria-label="Secciones">
+<button class="on" data-v="0">Aprende</button>
+<button data-v="1">Practicar</button>
+<button data-v="2">Perfil</button>
+<button data-v="3">Guía</button>
+</nav>
+<div id="play" role="dialog" aria-modal="true"></div>
+
+<script>
+var $=function(i){return document.getElementById(i)};
+var E=function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')};
+var F=function(s){return E(s).replace(/`([^`]+)`/g,'<code>$1</code>')};
+var C=function(q,o,a){return{t:'c',q:q,o:o,a:a}};
+var B=function(q,a,x){return{t:'b',q:q,a:a.split('|'),x:x?x.split('|'):[]}};
+var T=function(q,a){return{t:'t',q:q,a:a.split('||')}};
+var I=function(q,c){return{t:'i',q:q,c:c}};
+var H=[
+{id:'html',n:'HTML',d:'La estructura de la web',L:[
+{n:'Tu primera página',e:[I('Los elementos `html` y `body` forman la estructura de una página. Lo que quieres mostrar va dentro de `body`.','<html>\n  <body>\n  </body>\n</html>'),C('Un elemento es la etiqueta de apertura, la de cierre y lo que hay entre ellas. ¿Cuál es un elemento?',['`<button>`','`<button>Hola</button>`','`</p>`','`<h1>`'],1),C('¿Cuál de estas opciones crea una página HTML vacía?',['`<p> </p>`','`<h1> </h1>`','`<html> </html>`','`<button> </button>`'],2),B('Crea un elemento `h1` que muestre My Online Store.','<h1>|My Online Store|</h1>','<button>|</video>'),B('Escribe el elemento `body` dentro de `html`.','<html>|<body>|</body>|</html>','<head>'),T('Escribe la etiqueta de apertura de un párrafo.','<p>')]},
+{n:'Textos',e:[I('Los títulos van de `h1` (el más grande) a `h6`. Los párrafos usan `p`.','<h1>Título</h1>\n<p>Un párrafo de texto.</p>'),C('¿Qué etiqueta crea el título más grande?',['`<h6>`','`<h1>`','`<p>`','`<small>`'],1),B('Crea un párrafo que diga Hola.','<p>|Hola|</p>','<h1>|</h2>'),T('Escribe la etiqueta de apertura para poner texto en negrita.','<strong>||<b>'),C('¿Qué hace `<br>`?',['Salta de línea','Pone negrita','Crea un enlace','Cierra la página'],0),B('Crea un título h2 que diga Cursos.','<h2>|Cursos|</h2>','</h1>|<h3>')]},
+{n:'Enlaces e imágenes',e:[I('Un enlace usa `a` con el atributo `href`. Una imagen usa `img` con `src` y `alt`.','<a href="https://ejemplo.com">Visitar</a>\n<img src="foto.jpg" alt="Una foto">'),C('¿Qué etiqueta crea un enlace?',['`<a>`','`<img>`','`<link>`','`<url>`'],0),B('Crea un enlace que muestre Inicio.','<a href="/">|Inicio|</a>','<img>'),T('¿Qué atributo de `<img>` indica la dirección de la imagen? (3 letras)','src'),C('¿Qué atributo describe una imagen para quien no puede verla?',['`alt`','`src`','`href`','`title`'],0),B('Escribe una imagen con src gato.jpg.','<img|src="gato.jpg">','<a|alt="">')]},
+{n:'Listas y botones',e:[I('`ul` crea una lista con viñetas y cada elemento va dentro de un `li`.','<ul>\n  <li>HTML</li>\n  <li>CSS</li>\n</ul>'),C('¿Qué etiqueta crea una lista con viñetas?',['`<ul>`','`<ol>`','`<li>`','`<list>`'],0),B('Crea una lista con un elemento: Python.','<ul>|<li>|Python|</li>|</ul>','<ol>'),T('Escribe la etiqueta de apertura de un botón.','<button>'),C('Cada elemento de una lista va dentro de...',['`<li>`','`<td>`','`<p>`','`<div>`'],0)]},
+{n:'Linktree',pr:1,e:[I('Vas a crear una página de enlaces como la de un perfil. La armarás paso a paso y verás el resultado.','<h1>Mi nombre</h1>\n<p>Mi profesión</p>\n<a href="#">Mi enlace</a>'),B('Paso 1: crea el título con tu nombre.','<h1>|Emmy|</h1>','<h2>|</p>'),B('Paso 2: agrega un párrafo con tu profesión.','<p>|Aspiring Software Developer|</p>','</h1>'),B('Paso 3: crea un enlace a Twitter.','<a href="#">|Twitter|</a>','<img>'),B('Paso 4: crea un enlace a TikTok.','<a href="#">|TikTok|</a>','<button>')]},
+{n:'Mi tienda',pr:1,e:[I('Crearás la portada de una tienda en línea con título, ofertas, lista de productos y un botón.','<h1>My Online Store</h1>\n<p>Ofertas de hoy</p>\n<ul>\n  <li>Zapatos</li>\n</ul>\n<button>Comprar</button>'),B('Paso 1: crea el título de la tienda.','<h1>|My Online Store|</h1>','<h2>|</p>'),B('Paso 2: agrega un párrafo con las ofertas.','<p>|Ofertas de hoy|</p>','</h1>'),B('Paso 3: agrega una lista con un producto.','<ul>|<li>|Zapatos|</li>|</ul>','<ol>'),B('Paso 4: agrega el botón para comprar.','<button>|Comprar|</button>','<a>')]}]},
+{id:'css',n:'CSS',d:'El diseño y el estilo',L:[
+{n:'Colores',e:[I('CSS da estilo a los elementos. Eliges un selector y escribes propiedades entre llaves.','h1 {\n  color: red;\n}'),C('¿Qué propiedad cambia el color del texto?',['`color`','`background`','`font`','`text`'],0),B('Pon el texto del h1 en rojo.','h1|{|color:|red;|}','blue;|p'),T('Escribe la propiedad que cambia el color de fondo.','background-color||background'),C('¿Cómo se escribe una regla CSS?',['`h1 { color: red; }`','`h1 ( color = red )`','`<h1 color="red">`','`h1: color red`'],0)]},
+{n:'Texto y cajas',e:[I('`font-size` cambia el tamaño de letra y `padding` el espacio interior de una caja.','p {\n  font-size: 20px;\n  padding: 10px;\n}'),C('¿Qué propiedad cambia el tamaño de letra?',['`font-size`','`text-size`','`size`','`font-big`'],0),B('Centra el texto de los párrafos.','p|{|text-align:|center;|}','left;|h1'),C('¿Qué propiedad separa el contenido del borde de su caja?',['`padding`','`margin`','`border`','`gap`'],0),T('Escribe la propiedad para redondear esquinas.','border-radius'),C('¿Qué propiedad separa una caja de las demás?',['`margin`','`padding`','`color`','`display`'],0)]},
+{n:'Flexbox',e:[I('Con `display: flex` los hijos se acomodan en fila y puedes centrarlos.','.caja {\n  display: flex;\n  justify-content: center;\n}'),C('¿Con qué valor activas flexbox?',['`display: flex`','`flex: on`','`position: flex`','`layout: flex`'],0),B('Centra el contenido de .caja con flexbox.','.caja|{|display:|flex;|justify-content:|center;|}','align-items:|block;'),C('¿Qué propiedad separa los elementos hijos en flex y grid?',['`gap`','`space`','`pad`','`split`'],0),T('Propiedad para cambiar la dirección en flex: flex-...','flex-direction')]},
+{n:'Tarjeta de perfil',pr:'<div class="tarjeta"><h1>Emmy</h1><p>Desarrolladora de software</p></div>',e:[I('Darás estilo a una tarjeta de perfil. Cada paso agrega una regla CSS y verás cómo cambia.','.tarjeta {\n  background: lightblue;\n  padding: 20px;\n}'),B('Paso 1: pon el fondo de la tarjeta en azul claro.','.tarjeta|{|background:|lightblue;|}','red;|color:'),B('Paso 2: agrega espacio interior a la tarjeta.','.tarjeta|{|padding:|20px;|}','margin:|auto;'),B('Paso 3: redondea las esquinas de la tarjeta.','.tarjeta|{|border-radius:|16px;|}','color:|blue;'),B('Paso 4: centra el texto del título.','h1|{|text-align:|center;|}','left;|p')]},
+{n:'Botón con estilo',pr:'<button class="boton">Comprar</button>',e:[I('Ahora diseñarás un botón. Cada regla cambia un detalle de su apariencia.','.boton {\n  background: purple;\n  color: white;\n}'),B('Paso 1: pon el fondo del botón en morado.','.boton|{|background:|purple;|}','blue;|p'),B('Paso 2: pon el texto del botón en blanco.','.boton|{|color:|white;|}','black;|h1'),B('Paso 3: redondea las esquinas del botón.','.boton|{|border-radius:|12px;|}','border:|none;'),B('Paso 4: aumenta el tamaño de letra del botón.','.boton|{|font-size:|20px;|}','padding:|2px;')]}]},
+{id:'py',n:'Python',d:'Lógica y automatización',L:[
+{n:'Primeros pasos',e:[I('`print()` muestra texto. Una variable guarda un valor con `=`.','edad = 5\nprint("Hola")'),C('¿Qué función muestra texto en pantalla?',['`print()`','`echo()`','`show()`','`write()`'],0),B('Muestra Hola en pantalla.','print(|"Hola"|)','echo(|)'),T('Guarda el número 5 en la variable edad.','edad = 5||edad=5'),C('¿Qué tipo de dato es `"hola"`?',['str','int','float','bool'],0)]},
+{n:'Decisiones',e:[I('`if` ejecuta código solo si la condición es verdadera. `else` cubre el resto.','if edad > 17:\n    print("Adulto")\nelse:\n    print("Menor")'),C('¿Qué palabra inicia una condición?',['`if`','`when`','`case`','`maybe`'],0),B('Si edad es mayor que 17, muestra Adulto.','if|edad > 17:|print("Adulto")','else:|while'),C('¿Qué símbolo compara si dos valores son iguales?',['`==`','`=`','`=>`','`!`'],0),T('Escribe la palabra que significa "si no".','else')]},
+{n:'Bucles y funciones',e:[I('`for` recorre una lista y `def` crea una función.','for n in nombres:\n    print(n)\n\ndef saludar():\n    print("Hola")'),C('¿Qué bucle repite mientras algo sea verdadero?',['`while`','`if`','`def`','`print`'],0),B('Recorre la lista nombres.','for|n|in|nombres:','while|def'),C('¿Qué devuelve `len([1, 2, 3])`?',['3','2','1','4'],0),T('Escribe la palabra clave para crear una función.','def')]},
+{n:'Adivina el número',pr:'py',e:[I('Armarás un programa que decide si adivinaste un número. Al final verás el código completo.','secreto = 7\nintento = 5\nif intento == secreto: print("Ganaste")\nelse: print("Perdiste")'),B('Paso 1: guarda el número secreto.','secreto|=|7','intento|print'),B('Paso 2: guarda el intento del jugador.','intento|=|5','secreto|=='),B('Paso 3: si el intento es igual al secreto, muestra Ganaste.','if|intento == secreto:|print("Ganaste")','else:|while'),B('Paso 4: si no, muestra Perdiste.','else:|print("Perdiste")','elif|while')]}]}
+];
+var cap=function(t){return t.charAt(0).toUpperCase()+t.slice(1)};
+var LV=['Básico','Intermedio','Avanzado'],LN=[['html','HTML','La estructura de la web'],['css','CSS','El diseño y el estilo'],['py','Python','Lógica y automatización']];
+var PL=[[
+['<h1>~crear el título principal~<h1>|Hola|</h1>','<p>~crear un párrafo~<p>|Texto|</p>','<a>~crear un enlace~<a href="#">|Ir|</a>','<img>~mostrar una imagen~<img|src="a.jpg">','<ul>~crear una lista con viñetas~<ul>|<li>|Uno|</li>|</ul>','<button>~crear un botón~<button>|Clic|</button>','<br>~saltar a la línea siguiente','<strong>~poner texto en negrita~<strong>|Ojo|</strong>','<body>~contener lo que se ve en la página~<body>|</body>','<html>~envolver toda la página~<html>|</html>'],
+['<form>~agrupar campos para enviar datos','<input>~crear un campo para escribir','<label>~dar nombre a un campo de formulario','<table>~crear una tabla','<tr>~crear una fila de tabla','<td>~crear una celda de tabla','<select>~crear una lista desplegable','<textarea>~crear un campo de texto largo','<ol>~crear una lista numerada','<div>~agrupar elementos en un bloque'],
+['<header>~marcar la cabecera de una página','<nav>~agrupar los enlaces de navegación','<main>~marcar el contenido principal','<footer>~marcar el pie de página','<section>~dividir la página en secciones con tema','<article>~marcar contenido independiente, como una noticia','<video>~incrustar un video','<iframe>~incrustar otra página','<meta>~dar información de la página al navegador','<title>~definir el título de la pestaña']],[
+['color~cambiar el color del texto~p|{|color:|red;|}','background~cambiar el fondo~body|{|background:|blue;|}','font-size~cambiar el tamaño de letra~p|{|font-size:|20px;|}','text-align~alinear el texto~h1|{|text-align:|center;|}','margin~separar una caja de las demás~p|{|margin:|10px;|}','padding~dar espacio dentro de una caja~p|{|padding:|10px;|}','border~poner un borde~p|{|border:|1px solid black;|}','font-weight~poner texto en negrita~p|{|font-weight:|bold;|}','width~definir el ancho~img|{|width:|100px;|}','height~definir el alto~div|{|height:|50px;|}'],
+['display: flex~activar flexbox~.caja|{|display:|flex;|}','justify-content~alinear en el eje principal de flex~.caja|{|justify-content:|center;|}','align-items~alinear en el eje cruzado de flex~.caja|{|align-items:|center;|}','gap~separar los hijos de flex o grid~.caja|{|gap:|10px;|}','border-radius~redondear esquinas~.caja|{|border-radius:|8px;|}','position~controlar cómo se coloca un elemento~.caja|{|position:|relative;|}','display: grid~activar una cuadrícula~.caja|{|display:|grid;|}','box-shadow~agregar sombra~.caja|{|box-shadow:|0 2px 4px gray;|}','opacity~hacer algo transparente~.caja|{|opacity:|0.5;|}','overflow~controlar lo que sobresale de una caja~.caja|{|overflow:|hidden;|}'],
+['@media~aplicar estilos según el tamaño de pantalla','transition~animar un cambio suavemente','transform~mover, girar o escalar un elemento','@keyframes~definir una animación','grid-template-columns~definir las columnas de un grid','var(--color)~usar una variable CSS','a:hover~dar estilo al pasar el cursor','z-index~decidir qué elemento queda encima','calc()~hacer cálculos con medidas','::before~agregar contenido antes de un elemento']],[
+['print()~mostrar texto en pantalla~print(|"Hola"|)','input()~pedir un dato al usuario~input(|"Nombre: "|)','int~guardar números enteros','str~guardar texto','if~ejecutar código solo si una condición se cumple~if|x > 3:','else~ejecutar código cuando no se cumple la condición~else:','for~repetir código recorriendo una lista~for|n|in|lista:','while~repetir código mientras algo sea verdadero~while|x < 3:','def~crear una función~def|saludar():','len()~contar los elementos de una lista~len(|lista|)'],
+['list~guardar varios valores ordenados','dict~guardar pares de clave y valor','append()~agregar un elemento al final de una lista~lista.append(|5|)','return~devolver un valor desde una función~return|x','range()~generar una secuencia de números~range(|5|)','import~usar un módulo externo~import|math','elif~probar otra condición~elif|x == 2:','break~salir de un bucle~break','f"..."~insertar variables dentro de un texto','in~comprobar si un valor está en una lista~if|3|in|lista:'],
+['class~crear una clase para modelar objetos~class|Perro:','try/except~manejar errores sin detener el programa','lambda~crear una función anónima corta','with open()~abrir un archivo de forma segura','list comprehension~crear una lista en una sola línea','__init__~preparar un objeto nuevo','self~referirse al propio objeto dentro de una clase','zip()~recorrer dos listas a la vez','*args~recibir cualquier cantidad de argumentos','import json~trabajar con datos en formato JSON']]
+].map(function(a){return a.map(function(l){return l.map(function(t){return t.split('~')})})});
+var AL={'<strong>':'<b>','background':'background-color'};
+function GN(po,k){var w=[],ex=[],i;for(i=0;i<6;i++)w.push(po[(k*2+i)%po.length]);
+ for(i=0;i<20;i++){var e=w[i%6],r=shuf(po.filter(function(x){return x!=e})).slice(0,3),tm='`'+e[0]+'`',m=i%4;
+  if(m==0)ex.push(C('¿Para qué sirve '+tm+'?',[cap(e[1])].concat(r.map(function(x){return cap(x[1])})),0));
+  else if(m==1)ex.push(C('¿Qué usarías para '+e[1]+'?',[tm].concat(r.map(function(x){return'`'+x[0]+'`'})),0));
+  else if(m==2&&e[2]){var o=r.filter(function(x){return x[2]})[0];ex.push(B('Arma el código para '+e[1]+'.',e[2],o?o[2].split('|').slice(0,2).join('|'):''))}
+  else if(/^<[a-z0-9]+>$/.test(e[0])||/^[a-z-]{5,16}(\(\))?$/.test(e[0]))ex.push(T('Escribe lo que se usa para '+e[1]+'.',e[0]+(AL[e[0]]?'||'+AL[e[0]]:'')));else ex.push(C('¿Qué opción sirve para '+e[1]+'?',[tm].concat(r.map(function(x){return'`'+x[0]+'`'})),0))}
+ return shuf(ex)}
+var D=[];
+LN.forEach(function(l,li){LV.forEach(function(v,vi){var L=vi?[]:H[li].L.slice();
+ while(L.length<50)(function(k){L.push({n:'Lección '+(k+1),get e(){return GN(PL[li][vi],k)}})})(L.length);
+ D.push({id:l[0]+vi,n:l[1]+' '+v,d:l[2],lg:li,lv:vi,L:L})})});
+var S={done:{},xp:0,st:0,last:''},cc=0,Q=[],N=0,D0=0,OK=0,LID=null,OP=[],SEL=null,G=[],P=[];
+
+var U=null,GUEST=false;
+function fresh(){return{done:{},xp:0,st:0,last:''}}
+function store(){return GUEST?sessionStorage:localStorage}
+function pkey(){return GUEST?'pyhtcss_gp':'pyhtcss_p_'+U}
+function save(){try{store().setItem(pkey(),JSON.stringify(S))}catch(e){}}
+function load(){try{S=JSON.parse(store().getItem(pkey()))||fresh()}catch(e){S=fresh()}}
+function getAcc(){try{return JSON.parse(localStorage.getItem('pyhtcss_acc'))||{}}catch(e){return{}}}
+function setAcc(a){try{localStorage.setItem('pyhtcss_acc',JSON.stringify(a))}catch(e){}}
+function hash(p,sl){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(sl+p)).then(function(b){return[].map.call(new Uint8Array(b),function(x){return('0'+x.toString(16)).slice(-2)}).join('')})}
+function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function cnt(c){return c.L.filter(function(l,i){return S.done[c.id+i]}).length}
+function paint(){
+ if(S.sel!=null)cc=S.sel;
+ var n=0;D.forEach(function(c){n+=cnt(c)});
+ $('cx').textContent='⚡ '+S.xp;$('cs').textContent='🔥 '+S.st;$('cl').textContent='📚 '+n;
+ $('pills').innerHTML='<button class="link" style="margin:0">Cambiar lenguaje o nivel</button>';
+ var c=D[cc],d=cnt(c);
+ $('ban').innerHTML='<small>'+c.d+'</small><h2 style="margin:4px 0 0">'+c.n+' · '+d+' de '+c.L.length+' lecciones</h2><div class="bar" style="margin-top:12px"><i style="width:'+d/c.L.length*100+'%"></i></div>';
+ var h='';c.L.forEach(function(l,i){
+  if(i%10==0)h+='<div class="stg">Etapa '+(i/10+1)+'</div>';
+  var dn=S.done[c.id+i],pv=i==0||S.done[c.id+(i-1)],s=dn?'':pv?' cur':' lock';
+  h+='<div class="n" style="transform:translateX('+[0,64,0,-64][i%4]+'px)"><button class="node'+s+'" data-i="'+i+'" aria-label="'+l.n+'">'+(dn?'✓':i+1)+'</button><small>'+l.n+'</small></div>'});
+ $('path').innerHTML=h;
+ $('pst').innerHTML='<div class="stat"><span>XP total</span><b>'+S.xp+'</b></div><div class="stat"><span>Racha actual</span><b>'+S.st+' días</b></div><div class="stat"><span>Lecciones completadas</span><b>'+n+'</b></div>';
+}
+function pick(st,li){
+ var h='<div class="pw wel"><h2>'+(st?'¿Qué nivel quieres aprender?':'¿Qué lenguaje quieres aprender?')+'</h2><p class="mut">'+(st?'Elige el nivel con el que empezarás en '+LN[li][1]+'.':'Elige uno para empezar. Puedes cambiarlo cuando quieras.')+'</p>';
+ if(!st)LN.forEach(function(l,i){h+='<button class="opt" data-i="'+i+'"><b>'+l[1]+'</b><small>'+l[2]+'</small></button>'});
+ else [['Básico','Primeros conceptos desde cero'],['Intermedio','Para quien ya conoce lo esencial'],['Avanzado','Técnicas y buenas prácticas']].forEach(function(v,i){h+='<button class="opt" data-i="'+i+'"><b>'+v[0]+'</b><small>'+v[1]+' · 5 etapas</small></button>'});
+ if(S.sel!=null)h+='<button class="link" id="pc">Cancelar</button>';
+ $('play').style.display='block';$('play').innerHTML=h+'</div>';
+ if($('pc'))$('pc').onclick=close;
+ [].forEach.call($('play').querySelectorAll('.opt'),function(b){b.onclick=function(){var i=+b.dataset.i;if(!st)pick(1,i);else{S.sel=li*3+i;S.goal=D[S.sel].n;save();close()}}})}
+$('pills').onclick=function(){pick(0)};
+$('path').onclick=function(e){var b=e.target.closest('.node');if(!b||b.classList.contains('lock'))return;var l=D[cc].L[+b.dataset.i];start(l.e,D[cc].id+b.dataset.i,l.pr)};
+document.querySelector('.tabs').onclick=function(e){var b=e.target.closest('button');if(!b)return;
+ document.querySelectorAll('.tabs button').forEach(function(x){x.classList.toggle('on',x==b)});
+ document.querySelectorAll('.v').forEach(function(x,i){x.classList.toggle('on',i==+b.dataset.v)})};
+$('daily').onclick=function(){var p=[];D.forEach(function(c){c.L.forEach(function(l,i){if(S.done[c.id+i]||i==0)p=p.concat(l.e.filter(function(x){return x.t!='i'}))})});start(shuf(p).slice(0,5),null)};
+$('reset').onclick=function(){if(confirm('¿Seguro que quieres borrar tu progreso?')){var n0=S.name,g0=S.goal,s0=S.sel;S=fresh();S.name=n0;S.goal=g0;S.sel=s0;save();paint()}};
+function start(ex,id,pr){Q=ex.slice();N=Q.length;D0=0;OK=0;LID=id;PRJ=pr;ACC=[];T0=Date.now();ATT=0;Q.forEach(function(x){x.f=0});$('play').style.display='block';next()}
+function close(){$('play').style.display='none';if(S.sel==null&&(U||GUEST))return pick(0);paint()}
+function next(){
+ if(!Q.length)return fin();
+ var x=Q[0];SEL=null;G=[];
+ $('play').innerHTML='<div class="pw"><div class="ph"><button class="x" id="qx" aria-label="Salir">✕</button><div class="bar"><i style="width:'+D0/N*100+'%"></i></div></div><div class="pq">'+F(x.q)+hint(x)+'</div><div class="pb" id="pb"></div><div class="foot" id="ft"><button class="go" id="go" disabled>Comprobar</button></div></div>';
+ $('qx').onclick=close;$('go').onclick=check;
+ if(x.t=='i'){$('pb').innerHTML='<pre style="background:var(--card);border-radius:12px;padding:14px;overflow:auto"><code>'+E(x.c)+'</code></pre>';$('go').disabled=false;$('go').textContent='Continuar';$('go').onclick=function(){Q.shift();N--;next()};return}
+ var pb=$('pb');
+ if(x.t=='c'){var rm=x.f||0;OP=shuf(x.o.map(function(s,i){return{s:s,ok:i==x.a}})).filter(function(o){if(o.ok||rm<=0)return true;rm--;return false});
+  pb.className='pb opts';pb.innerHTML=OP.map(function(o,i){return'<button data-i="'+i+'">'+F(o.s)+'</button>'}).join('');
+  pb.onclick=function(e){var b=e.target.closest('button');if(!b)return;SEL=+b.dataset.i;[].forEach.call(pb.children,function(k){k.classList.toggle('sel',k==b)});$('go').disabled=false}}
+ else if(x.t=='b'){P=shuf(x.a.concat(x.x));draw();
+  pb.onclick=function(e){var b=e.target.closest('.tk');if(!b)return;if(b.dataset.a!=null)G.push(+b.dataset.a);else G.splice(G.indexOf(+b.dataset.r),1);draw()}}
+ else{pb.innerHTML='<input id="ti" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Tu respuesta">';
+  $('ti').oninput=function(){$('go').disabled=!this.value.trim()};$('ti').onkeydown=function(e){if(e.key=='Enter'&&!$('go').disabled)check()};$('ti').focus()}
+}
+function draw(){
+ $('pb').innerHTML='<div class="slot">'+G.map(function(i){return'<button class="tk" data-r="'+i+'">'+E(P[i])+'</button>'}).join('')+'</div><div class="pool">'+P.map(function(p,i){return G.indexOf(i)>-1?'':'<button class="tk" data-a="'+i+'">'+E(p)+'</button>'}).join('')+'</div>';
+ $('go').disabled=!G.length}
+function hint(x){if(!x.f)return'';var t=x.t=='c'?'Descartamos '+(x.f==1?'una opción incorrecta.':'dos opciones incorrectas.'):x.t=='b'?'Pista: empieza con <code>'+E(x.a.slice(0,x.f).join(' '))+'</code>':'Pista: empieza con <code>'+E(x.a[0].slice(0,x.f*2))+'</code>';return'<p class="hint">'+t+'</p>'}
+function nz(t){return t.toLowerCase().replace(/[\s<>]/g,'').replace(/\(\)$/,'')}
+function pvw(){var h;if(PRJ=='py')h='<pre style="font:14px monospace;margin:12px">'+E(ACC.join('\n'))+'</pre>';else h=typeof PRJ=='string'?PRJ+'<style>'+ACC.join('\n')+'</style>':ACC.join('\n');return h.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}
+function check(){
+ var x=Q[0],ok,ah,pv='';ATT++;
+ if(x.t=='c'){ok=OP[SEL].ok;ah=F(x.o[x.a])}
+ else if(x.t=='b'){ok=G.map(function(i){return P[i]}).join('|')==x.a.join('|');ah='<code>'+E(x.a.join(' '))+'</code>'}
+ else{var v=nz($('ti').value);ok=x.a.some(function(a){return nz(a)==v});ah='<code>'+E(x.a[0])+'</code>'}
+ if(!ok&&(x.f||0)<2){x.f=(x.f||0)+1;$('pb').style.pointerEvents='none';var f0=$('ft');f0.className='foot bad';f0.innerHTML='<div class="msg"><div><b>Aún no. Inténtalo de nuevo</b><p style="margin:4px 0 0">Te damos una pista para este nuevo intento.</p></div></div><button class="go" id="g2">Reintentar</button>';$('g2').onclick=next;$('g2').focus();return}
+ Q.shift();if(ok){D0++;OK++;var h=x.t=='b'?x.a.join(' '):x.t=='t'?x.a[0]:'';if(h){if(PRJ){ACC.push(h);pv=pvw()}else if(h.charAt(0)=='<'&&LID&&LID.indexOf('html')==0)pv=h.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}}else{x.f=0;Q.push(x)}
+ $('pb').style.pointerEvents='none';
+ var f=$('ft');f.className='foot '+(ok?'ok':'bad');
+ f.innerHTML='<div class="msg"><div><b>'+(ok?'¡Perfecto!':'Esta es la respuesta')+'</b>'+(ok?'':'<p style="margin:4px 0 0">'+ah+'<br><small class="mut">Volverás a verlo al final para practicarlo.</small></p>')+'</div></div>'+(pv?'<iframe class="fr" sandbox srcdoc="'+pv+'" title="Vista previa"></iframe>':'')+'<button class="go" id="g2">Continuar</button>';
+ $('g2').onclick=next;$('g2').focus()}
+function fin(){
+ var t=new Date(),d=t.toISOString().slice(0,10),y=new Date(t-864e5).toISOString().slice(0,10);
+ if(S.last!=d){S.st=S.last==y?S.st+1:1;S.last=d}
+ var xp=OK*10,pc=Math.round(OK/Math.max(ATT,1)*100);
+ if(S.dd!=d){S.dd=d;S.dx=0}S.dx=(S.dx||0)+xp;
+ S.xp+=xp;S.mins=(S.mins||0)+Math.max(1,Math.round((Date.now()-T0)/6e4));S.acts=(S.acts||0)+1;if(S.st>(S.best||0))S.best=S.st;if(LID)S.done[LID]=1;save();
+ var A=pc>=90?'Excelente precisión. Intenta explicar lo aprendido con tus propias palabras.':pc>=60?'Buen avance. Repasar lo que fallaste te ayudará a fijar el concepto.':'Equivocarse es parte de aprender. Repite esta lección: la práctica repetida funciona.',
+ G=['Practicar 10 minutos al día rinde más que una sola sesión larga a la semana.','Escribe código en el playground: ver el resultado fija lo aprendido.','Lee los errores con calma: casi siempre indican qué corregir.','Los proyectos te ayudan a juntar todo lo que ya sabes.'],
+ hero=PRJ?'<iframe class="fr" sandbox srcdoc="'+pvw()+'" title="Tu proyecto"></iframe>':'<svg viewBox="0 0 170 120" width="150" aria-hidden="true"><rect x="20" y="82" width="130" height="26" rx="7" fill="#2F6BF0"/><rect x="30" y="54" width="112" height="26" rx="7" fill="#7C4DDB"/><rect x="24" y="26" width="122" height="26" rx="7" fill="#0E8A63"/><rect x="40" y="91" width="64" height="5" rx="2.5" fill="#fff" opacity=".55"/><rect x="48" y="63" width="52" height="5" rx="2.5" fill="#fff" opacity=".55"/><rect x="40" y="35" width="60" height="5" rx="2.5" fill="#fff" opacity=".55"/><circle cx="140" cy="24" r="16" fill="#FFC83D"/><path d="M132 24l6 6 11-12" stroke="#3A2A00" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+ $('play').innerHTML='<div class="pw fin"><div class="fm">'+hero+'<h2>¡Lección completada!</h2><p class="mut" style="margin:0">'+(pc==100?'Sin errores. ¡Gran trabajo!':(ATT-OK)+(ATT-OK==1?' respuesta fallida':' respuestas falladas')+' de '+ATT+' intentos.')+'</p><p class="tip">'+A+'<br>'+G[Math.floor(Math.random()*G.length)]+'</p></div><div class="fb"><div class="sts"><div><b style="color:var(--ok)">'+OK+'</b>Ejercicios</div><div><b style="color:#D69E00">'+xp+'</b>XP obtenido</div><div><b style="color:#4C84F5">'+pc+'%</b>Precisión</div></div><div class="bar"><i style="width:'+Math.min(100,S.dx)+'%"></i></div><div class="gl"><span>Objetivo diario</span><span>'+S.dx+'/100 XP</span></div><button class="go" id="fx">Continuar</button></div></div>';
+ $('fx').onclick=close}
+var code=$('code'),out=$('out');
+code.value='<h1>Hola, mundo</h1>\n<p>Cambia el color y mira qué pasa.</p>\n<style>\n  h1 { color: tomato; }\n</style>';
+function run(){out.srcdoc='<body style="font-family:sans-serif;margin:12px">'+code.value}
+var RF=[[
+'<etiqueta>~Una etiqueta es una palabra entre `<` y `>`. Le dice al navegador qué tipo de contenido viene. La mayoría vienen en pareja: una de apertura y una de cierre.~<p>Hola</p>',
+'</ (etiqueta de cierre)~`</` marca el inicio de una etiqueta de cierre. La barra `/` después de `<` indica que el elemento termina ahí. Es la barra normal, no la invertida. Sin ella, el navegador no sabe dónde acaba el elemento.~<h1>Título</h1>',
+'elemento~Un elemento es la etiqueta de apertura, el contenido y la etiqueta de cierre, todo junto.~<p>Hola</p>',
+'atributo~Dato extra dentro de la etiqueta de apertura, con la forma nombre="valor". Por ejemplo, `href` dice a dónde lleva un enlace.~<a href="https://ejemplo.com">Visitar</a>',
+'<!DOCTYPE html>~Va en la primera línea. Le avisa al navegador que la página usa HTML5.~<!DOCTYPE html>',
+'<html>~Envuelve toda la página: todo lo demás va dentro de ella. Se cierra al final con `</html>`.~<html>\n  <head></head>\n  <body></body>\n</html>',
+'<head>~Guarda información de la página que no se ve: el título, el idioma, los estilos. No es el contenido visible.~<head>\n  <title>Mi página</title>\n</head>',
+'<title>~Define el título que aparece en la pestaña del navegador.~<title>Mi página</title>',
+'<meta>~Da información al navegador y a los buscadores, como la codificación de caracteres. No lleva etiqueta de cierre.~<meta charset="utf-8">',
+'<body>~Contiene todo lo que se ve en la página: textos, imágenes, botones y más.~<body>\n  <h1>Hola</h1>\n</body>',
+'<h1> a <h6>~Crean títulos. `<h1>` es el más importante y grande; `<h6>` el menos importante.~<h1>Título</h1>\n<h2>Subtítulo</h2>',
+'<p>~Crea un párrafo de texto.~<p>Un párrafo.</p>',
+'<br>~Salta a la línea siguiente. No necesita cierre.~Línea 1<br>Línea 2',
+'<strong> y <em>~`<strong>` pone el texto en negrita (importante). `<em>` lo pone en cursiva (énfasis).~<strong>Ojo</strong> y <em>suave</em>',
+'<a>~Crea un enlace. El atributo `href` indica el destino.~<a href="https://ejemplo.com">Ir</a>',
+'<img>~Muestra una imagen. `src` es la ruta de la imagen y `alt` la describe para quien no puede verla. No lleva cierre.~<img src="gato.jpg" alt="Un gato">',
+'<ul>, <ol> y <li>~`<ul>` es una lista con viñetas, `<ol>` una lista numerada y `<li>` cada elemento de la lista.~<ul>\n  <li>HTML</li>\n  <li>CSS</li>\n</ul>',
+'<div>~Un bloque sin significado propio que sirve para agrupar elementos y darles estilo.~<div>\n  <p>Dentro del bloque</p>\n</div>',
+'<span>~Agrupa una parte de un texto dentro de una línea, por ejemplo para darle color.~<p>Hola <span>mundo</span></p>',
+'<button>~Crea un botón en el que se puede hacer clic.~<button>Comprar</button>',
+'<form> e <input>~`<form>` agrupa los campos para enviar datos. `<input>` crea un campo donde escribir.~<form>\n  <input type="text">\n</form>',
+'<table>, <tr> y <td>~`<table>` crea una tabla, `<tr>` una fila y `<td>` una celda.~<table>\n  <tr>\n    <td>Dato</td>\n  </tr>\n</table>',
+'<header>, <nav>, <main> y <footer>~Etiquetas semánticas: marcan la cabecera, los enlaces de navegación, el contenido principal y el pie de la página.~<header>Mi sitio</header>\n<main>Contenido</main>\n<footer>Fin</footer>',
+'<!-- -->~Un comentario. El navegador lo ignora; sirve para dejar notas en el código.~<!-- Esto no se ve -->'],[
+'selector~Indica a qué elementos se aplica un estilo. Puede ser una etiqueta (`p`), una clase (`.caja`) o un id (`#titulo`).~p { color: red; }\n.caja { padding: 10px; }',
+'regla CSS~Un selector, llaves y dentro las propiedades. Cada propiedad lleva `:` y termina con `;`.~h1 {\n  color: red;\n}',
+'color~Cambia el color del texto.~p { color: blue; }',
+'background~Cambia el fondo de un elemento.~body { background: lightyellow; }',
+'font-size~Cambia el tamaño de la letra.~p { font-size: 20px; }',
+'margin y padding~`margin` es el espacio por fuera de la caja; `padding` es el espacio por dentro, entre el borde y el contenido.~.caja { margin: 10px; padding: 20px; }',
+'border y border-radius~`border` pone un borde y `border-radius` redondea las esquinas.~.caja {\n  border: 2px solid black;\n  border-radius: 12px;\n}',
+'display: flex~Activa flexbox: los hijos se acomodan en fila y es fácil alinearlos.~.caja { display: flex; }',
+'justify-content y align-items~En flex, `justify-content` alinea en la dirección principal y `align-items` en la cruzada.~.caja {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}',
+'gap~Separa los elementos hijos en flex o grid.~.caja { display: flex; gap: 10px; }',
+':hover~Cambia el estilo cuando pasas el cursor por encima.~button:hover { background: orange; }',
+'@media~Aplica estilos solo en ciertos tamaños de pantalla. Sirve para adaptar la página al celular.~@media (max-width: 600px) {\n  body { font-size: 14px; }\n}',
+'/* */~Un comentario en CSS. El navegador lo ignora.~/* Estilo del título */'],[
+'print()~Muestra texto o valores en pantalla.~print("Hola")',
+'variable~Un nombre que guarda un valor. Se crea con `=`.~edad = 15\nnombre = "Ana"',
+'input()~Pide al usuario que escriba un dato. Siempre devuelve texto.~nombre = input("Tu nombre: ")',
+'int, float y str~Tipos de dato: `int` enteros, `float` decimales y `str` texto.~a = 5\nb = 2.5\nc = "hola"',
+'if, elif y else~Ejecutan código según una condición. `elif` prueba otra y `else` cubre el resto.~if edad > 17:\n    print("Adulto")\nelse:\n    print("Menor")',
+'sangría~Los espacios al inicio de la línea indican qué código pertenece a un bloque. Es obligatoria en Python.~if x > 3:\n    print("Mayor")',
+'for~Repite código recorriendo una lista o un rango.~for n in range(3):\n    print(n)',
+'while~Repite código mientras la condición sea verdadera.~x = 0\nwhile x < 3:\n    x += 1',
+'def y return~`def` crea una función y `return` devuelve un valor.~def doble(n):\n    return n * 2',
+'list~Guarda varios valores en orden, entre corchetes.~frutas = ["pera", "uva"]\nfrutas.append("kiwi")',
+'dict~Guarda pares de clave y valor, entre llaves.~persona = {"nombre": "Ana", "edad": 15}',
+'import~Trae herramientas de otro módulo.~import math\nprint(math.sqrt(9))',
+'#~Un comentario en Python. Python lo ignora.~# Esto es una nota']
+].map(function(a){return a.map(function(t){return t.split('~')})});
+var rl=0;
+function guide(){var q=$('gq').value.toLowerCase(),h='';
+ RF[rl].forEach(function(r){if((r[0]+' '+r[1]).toLowerCase().indexOf(q)<0)return;h+='<details class="rf"><summary><code>'+E(r[0])+'</code></summary><p>'+F(r[1])+'</p>'+(r[2]?'<pre><code>'+E(r[2])+'</code></pre>':'')+'</details>'});
+ $('gl').innerHTML=h||'<p class="mut">No encontramos nada con esa búsqueda.</p>';
+ $('gp').innerHTML=LN.map(function(l,i){return'<button data-i="'+i+'"'+(i==rl?' class="on"':'')+'>'+l[1]+'</button>'}).join('')}
+$('gp').onclick=function(e){var b=e.target.closest('button');if(b){rl=+b.dataset.i;guide()}};
+$('gq').oninput=guide;
+var _p=paint;paint=function(){_p();extra()};
+function extra(){document.body.dataset.c=D[cc].lg;
+ $('pnm').textContent=S.name||'Estudiante';$('av').textContent=(S.name||'E').charAt(0).toUpperCase();$('pgl').textContent=GUEST?'Modo invitado: tu progreso se borra al salir del sitio':'Quiero aprender '+(S.goal||'');$('lo').textContent=GUEST?'Salir y borrar progreso':'Cerrar sesión';$('lo').removeAttribute('data-s');
+ $('pst').innerHTML+='<div class="stat"><span>Mejor racha</span><b>'+(S.best||0)+' días</b></div>';
+ var p=[0,1,2].map(function(k){return Math.round((cnt(D[3*k])+cnt(D[3*k+1])+cnt(D[3*k+2]))/1.5)}),a=function(){var v=[].slice.call(arguments);return Math.round(v.reduce(function(s,x){return s+x},0)/v.length)};
+ var R=[['Desarrollador Full-Stack',a(p[0],p[1],p[2])],['Desarrollador Front-End',a(p[0],p[1])],['Desarrollador de Python',p[2]],['HTML',p[0]],['CSS',p[1]],['Python',p[2]]];
+ $('prg').innerHTML=R.map(function(r){return'<div class="cert"><span>'+r[0]+'</span><b>'+r[1]+'%</b></div>'}).join('')+'<div class="cert mut"><span>JavaScript · SQL · React</span><span>Pronto</span></div>';
+ var h='';D.forEach(function(c){c.L.forEach(function(l,i){if(S.done[c.id+i]&&!l.pr)h+='<div class="card" data-k="'+c.id+i+'"><small>'+Math.ceil(l.e.length/2)+' min</small><p style="margin:18px 0 0;font-weight:700">'+c.n+' · '+l.n+'</p></div>'})});
+ $('past').innerHTML=h||'<p class="mut">Completa una lección para repasarla aquí.</p>';
+ $('perf').innerHTML='<div class="stat"><span>Actividades concluidas</span><b>'+(S.acts||0)+'</b></div><div class="stat"><span>Tiempo practicando</span><b>'+(S.mins||0)+' min</b></div>';
+ D[cc].L.forEach(function(l,i){if(l.pr){var b=document.querySelector('.node[data-i="'+i+'"]');if(b){b.classList.add('pj');b.innerHTML='<small>Proyecto</small><br><b>'+l.n+'</b>';b.nextElementSibling.style.display='none';b.parentNode.style.transform='none'}}})}
+$('past').onclick=function(e){var k=e.target.closest('[data-k]');if(!k)return;D.forEach(function(c){c.L.forEach(function(l,i){if(c.id+i==k.dataset.k)start(l.e.filter(function(x){return x.t!='i'}),null)})})};
+$('sh').onclick=function(){var t='Llevo '+$('cl').textContent.replace('📚 ','')+' lecciones y '+S.xp+' XP en PyHtCSS';if(navigator.share)navigator.share({text:t}).catch(function(){});else if(navigator.clipboard)navigator.clipboard.writeText(t).then(function(){$('sh').textContent='¡Copiado!'}).catch(function(){})};
+function enter(id){var a=getAcc()[id];U=id;GUEST=false;try{localStorage.setItem('pyhtcss_cur',id);sessionStorage.removeItem('pyhtcss_guest')}catch(e){}load();S.name=a.n;close()}
+function guest(){U=null;GUEST=true;try{sessionStorage.setItem('pyhtcss_guest','1');localStorage.removeItem('pyhtcss_cur')}catch(e){}load();S.name='Invitado';close()}
+function wel(m){
+ var h='<div class="pw wel"><div style="font-size:44px;font-weight:800;letter-spacing:-.02em;margin-top:6vh"><span style="color:#D9480F">Py</span><span style="color:#2F6BF0">Ht</span><span style="color:#0E8A63">CSS</span></div><h2>¡Bienvenido/a a PyHtCSS!</h2>';
+ if(!m)h+='<p class="mut">Aprende HTML, CSS y Python con lecciones cortas y proyectos.</p><button class="go" id="w1">Iniciar sesión</button><button class="go alt" id="w2">Crear cuenta</button><button class="link" id="w3">Continuar como invitado</button><p class="mut" style="font-size:14px">Como invitado, tu progreso se borra al salir del sitio.</p>';
+ else h+='<p class="mut">'+(m==1?'Entra a tu cuenta.':'Crea tu cuenta gratis.')+'</p><input id="wu" placeholder="Usuario" autocomplete="username" aria-label="Usuario"><input id="wp" type="password" placeholder="'+(m==2?'Contraseña (mínimo 8 caracteres)':'Contraseña')+'" autocomplete="'+(m==1?'current-password':'new-password')+'" aria-label="Contraseña">'+''+'<p id="we" class="err" role="alert"></p><button class="go" id="wb">'+(m==1?'Entrar':'Crear cuenta')+'</button><button class="link" id="wk">Volver</button><p class="mut" style="font-size:14px">Tu cuenta se guarda solo en este dispositivo. No uses una contraseña de otros sitios.</p>';
+ $('play').style.display='block';$('play').innerHTML=h+'</div>';
+ if(!m){$('w1').onclick=function(){wel(1)};$('w2').onclick=function(){wel(2)};$('w3').onclick=guest;return}
+ $('wk').onclick=function(){wel(0)};
+ $('wb').onclick=function(){var u=$('wu').value.trim(),pw=$('wp').value,id=u.toLowerCase(),A=getAcc(),er=function(t){$('we').textContent=t},bad='Usuario o contraseña incorrectos.';
+  if(!u||!pw)return er('Escribe tu usuario y tu contraseña.');if(m==2&&pw.length<8)return er('La contraseña debe tener al menos 8 caracteres.');
+  if(m==2){if(A[id])return er('Ese usuario ya existe.');var sl=crypto.randomUUID();hash(pw,sl).then(function(h){A[id]={n:u,s:sl,h:h,g:''};setAcc(A);enter(id)}).catch(function(){er('No se pudo crear la cuenta. Intenta de nuevo.')})}
+  else{if(!A[id])return er(bad);hash(pw,A[id].s).then(function(h){if(h!==A[id].h)return er(bad);enter(id)}).catch(function(){er('No se pudo iniciar sesión. Intenta de nuevo.')})}}
+}
+$('lo').onclick=function(){if(GUEST&&!this.dataset.s){this.dataset.s=1;this.textContent='Toca otra vez: se borrará tu progreso';return}try{sessionStorage.removeItem('pyhtcss_guest');sessionStorage.removeItem('pyhtcss_gp');localStorage.removeItem('pyhtcss_cur')}catch(e){}U=null;GUEST=false;S=fresh();paint();wel(0)};
+try{var cu=localStorage.getItem('pyhtcss_cur'),A0=getAcc();if(cu&&A0[cu]){U=cu;load();S.name=A0[cu].n}else if(sessionStorage.getItem('pyhtcss_guest')){GUEST=true;load();S.name='Invitado'}}catch(e){}
+code.oninput=run;run();paint();rl=D[cc].lg;guide();if(!U&&!GUEST)wel(0);else if(S.sel==null)pick(0);
+</script>
+</body>
+</html>
